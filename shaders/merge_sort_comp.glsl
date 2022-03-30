@@ -32,19 +32,17 @@ bool is_greater(in const uint left, in const uint right){
 // Pick comparison funtion
 #define COMPARE is_greater
 
+#define SWAP(T, x, y) { T tmp = x; x = y; y = tmp; }
+
 void global_compare_and_swap(ivec2 idx){
     if (COMPARE(value[idx.x], value[idx.y])) {
-        uint tmp = value[idx.x];
-        value[idx.x] = value[idx.y];
-        value[idx.y] = tmp;
+        SWAP(uint, value[idx.x], value[idx.y]);
     }
 }
 
 void local_compare_and_swap(ivec2 idx){
     if (COMPARE(local_value[idx.x], local_value[idx.y])) {
-        uint tmp = local_value[idx.x];
-        local_value[idx.x] = local_value[idx.y];
-        local_value[idx.y] = tmp;
+        SWAP(uint, local_value[idx.x], local_value[idx.y]);
     }
 }
 
@@ -116,9 +114,9 @@ void local_bitonic_merge_sort_example(uint h){
 }
 
 void main(){
-    uint t = gl_LocalInvocationID.x;
+    const uint t = gl_LocalInvocationID.x;
 
-    uint offset = gl_WorkGroupSize.x * 2 * gl_WorkGroupID.x; // we can use offset if we have more than one invocation.
+    const uint offset = gl_WorkGroupSize.x * 2 * gl_WorkGroupID.x; // we can use offset if we have more than one invocation.
 
     if (u_algorithm <= eLocalDisperse){
         // In case this shader executes a `local_` algorithm, we must
