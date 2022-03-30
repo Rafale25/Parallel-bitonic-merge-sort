@@ -17,7 +17,7 @@ layout(std430, binding=0) buffer sort_data
 };
 
 // uniform uint algorithm;
-uniform uint u_h = 0;
+uniform uint u_h;
 uniform uint u_algorithm;
 
 // Workgroup local memory. We use this to minimise round-trips to global memory.
@@ -78,15 +78,15 @@ void big_disperse(in uint h) {
 
 // Performs full-height flip (h height) over locally available indices.
 void local_flip(in uint h){
-        uint t = gl_LocalInvocationID.x;
-        barrier();
+    uint t = gl_LocalInvocationID.x;
+    barrier();
 
-        uint half_h = h >> 1; // Note: h >> 1 is equivalent to h / 2
-        ivec2 indices =
-            ivec2( h * ( ( 2 * t ) / h ) ) +
-            ivec2( t % half_h, h - 1 - ( t % half_h ) );
+    uint half_h = h >> 1; // Note: h >> 1 is equivalent to h / 2
+    ivec2 indices =
+        ivec2( h * ( ( 2 * t ) / h ) ) +
+        ivec2( t % half_h, h - 1 - ( t % half_h ) );
 
-        local_compare_and_swap(indices);
+    local_compare_and_swap(indices);
 }
 
 // Performs progressively diminishing disperse operations (starting with height h)
